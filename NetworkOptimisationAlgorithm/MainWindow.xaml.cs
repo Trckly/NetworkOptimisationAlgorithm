@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using NetworkOptimisationAlgorithm.Dijkstra;
 
 namespace NetworkOptimisationAlgorithm;
 
@@ -161,7 +162,9 @@ public partial class MainWindow : Window
 
         if ((string)AlgorithmComboBox.SelectedValue == "Dijkstra")
         {
-            Console.WriteLine("Dijkstra");
+            var dijkstra = new DijkstraAlgorithm(weightMatrix);
+            
+            dijkstra.Solve();
         }
         else
         {

@@ -36,16 +36,14 @@ public class DijkstraAlgorithm
 
     public void Solve()
     {
-        
-    }
+        var bSolved = false;
 
-    private void FillPathTable()
-    {
-        if (_markedNodes.Count == 0)
+        while (!bSolved)
         {
-            _markedNodes.Add(0, false);
-            _weightArray[0] = 0;
-            _tracebackArray[0] = -1;
+            // Initial mark on first node
+            CalculatePath();
+            bSolved = IsSolved();
+            DijkstraLogger.OutCalculationTable(_weightArray, _tracebackArray, _markedNodes);
         }
     }
 
@@ -56,7 +54,8 @@ public class DijkstraAlgorithm
         var minIndex = -1;
         for (var i = 0; i < _weightArray.Count; i++)
         {
-            if (_markedNodes.TryGetValue(i, out var isTraversed) && !isTraversed)
+            _markedNodes.TryGetValue(i, out var value);
+            if (_weightArray[i] != int.MaxValue && !value)
             {
                 if (min <= _weightArray[i]) continue;
                 min = _weightArray[i];
@@ -64,26 +63,50 @@ public class DijkstraAlgorithm
             }
         }
         
-        for (var i = 0; i < _weightArray.Count; i++)
+        if (_markedNodes.Count == 0)
         {
-            if (_markedNodes.TryGetValue(i, out var isTraversed) && !isTraversed && i != minIndex)
-            {
-                var weight = Dijkstra(minIndex, i);
-                if (weight != _weightArray[i])
-                {
-                    _weightArray[i] = weight;
-                    _tracebackArray[i] = minIndex;
-                }
-            }
-            else
-            {
-                
-            }
+            _markedNodes.Add(0, false);
+            _weightArray[0] = 0;
+            _tracebackArray[0] = -1;
+            minIndex = 0;
         }
+        else
+        {
+            _markedNodes.Add(minIndex, false);
+        }
+
+        for (var j = 0; j < _weightArray.Count; j++)
+        {
+            var rowWeight = Dijkstra(minIndex, j);
+            if (rowWeight != _weightArray[j])
+            {
+                _tracebackArray[j] = minIndex;
+            }
+            _weightArray[j] = rowWeight;
+        }
+        
+        _markedNodes[minIndex] = true;
     }
 
     private int Dijkstra(int minIndex, int targetIndex)
     {
+        var pathWeight = _weightMatrix[minIndex, targetIndex];
+        if (pathWeight == int.MaxValue)
+        {
+            return Math.Min(_weightArray[targetIndex], pathWeight);
+        }
         return Math.Min(_weightArray[targetIndex], _weightArray[minIndex] + _weightMatrix[minIndex, targetIndex]);
+    }
+
+    private bool IsSolved()
+    {
+        if(_markedNodes.Count < _weightArray.Count) return false;
+        
+        for (var i = 0; i < _markedNodes.Count; i++)
+        {
+            if(_markedNodes[i] == false) return false;
+        }
+
+        return true;
     }
 }
