@@ -7,9 +7,13 @@ public class DijkstraAlgorithm
 {
     private int [,] _weightMatrix;
 
-    private Dictionary<int, bool> _markedNodes;
     private List<int> _weightArray;
     private List<int> _tracebackArray;
+    private Dictionary<int, bool> _markedNodes;
+    
+    public List<int> WeightArray => _weightArray;
+    public List<int> TracebackArray => _tracebackArray;
+    public Dictionary<int, bool> MarkedNodes => _markedNodes;
 
     public DijkstraAlgorithm(int[,] weightMatrix)
     {

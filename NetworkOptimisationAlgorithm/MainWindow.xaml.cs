@@ -165,6 +165,9 @@ public partial class MainWindow : Window
             var dijkstra = new DijkstraAlgorithm(weightMatrix);
             
             dijkstra.Solve();
+            
+            DijkstraTableBuilder.OutFinalTable(dijkstra.WeightArray, dijkstra.TracebackArray, 
+                DynamicGridContainer);
         }
         else
         {

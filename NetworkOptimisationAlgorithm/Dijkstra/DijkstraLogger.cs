@@ -21,7 +21,7 @@ public class DijkstraLogger
         var tracebackArrOutStr = "";
         foreach (var traceback in tracebackArray)
         {
-            tracebackArrOutStr += traceback == -1 ? "-\t" : traceback + "\t";
+            tracebackArrOutStr += traceback == -1 ? "-\t" : (char)('A' + traceback) + "\t";
         }
         Console.WriteLine(tracebackArrOutStr);
         
@@ -32,5 +32,6 @@ public class DijkstraLogger
             marckedNodesArrOutStr += value + "\t";
         }
         Console.WriteLine(marckedNodesArrOutStr);
+        Console.WriteLine();
     }
 }
