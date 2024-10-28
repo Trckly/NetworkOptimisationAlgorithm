@@ -1,20 +1,18 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 
-namespace NetworkOptimisationAlgorithm.Dijkstra;
+namespace NetworkOptimisationAlgorithm.Floyd;
 
-public class DijkstraTableBuilder
+public static class FloydTableBuilder
 {
-    public static void BuildFinalTable(List<int> weightArray, List<int> tracebackArray, StackPanel dynamicGridContainer)
+    public static void BuildFinalTable(int [,] shortestPathMatrix, int [,] routeMatrix, StackPanel dynamicGridContainer)
     {
-        var nodeCount = weightArray.Count;
+        var nodeCount = shortestPathMatrix.GetLength(0);
         const int headerCount = 3;
-
+        
         var tableTitle = new TextBlock
         {
-            Text = "Dijkstra Result Table: ",
+            Text = "Floyd Result Table: ",
             TextAlignment = TextAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -23,7 +21,7 @@ public class DijkstraTableBuilder
             Margin = new Thickness(0,10,0,0)
         };
         dynamicGridContainer.Children.Add(tableTitle);
-        
+    
         var resultGrid = new Grid()
         {
             ShowGridLines = true,
@@ -33,27 +31,42 @@ public class DijkstraTableBuilder
         for (var i = 0; i <= nodeCount; i++)
         {
             resultGrid.RowDefinitions.Add(new RowDefinition());
-
+    
             if (i < headerCount)
                 resultGrid.ColumnDefinitions.Add(new ColumnDefinition());
         }
-
+    
         CreateCell(resultGrid, 0, 0, "Route");
         CreateCell(resultGrid, 0, 1, "Path");
         CreateCell(resultGrid, 0, 2, "Length");
-
+    
         for (var i = 1; i <= nodeCount; ++i)
         {
-            TracePath(weightArray, tracebackArray, i - 1, out var path, out var length);
-
+            var pathStr = TracePath(routeMatrix, i - 1);
+    
             CreateCell(resultGrid, i, 0, $"A-{(char)('A' + i - 1)}");
-            CreateCell(resultGrid, i, 1, $"{path}");
-            CreateCell(resultGrid, i, 2, $"{length}");
+            CreateCell(resultGrid, i, 1, $"{pathStr}");
+            CreateCell(resultGrid, i, 2, $"{shortestPathMatrix[0, i - 1]}");
         }
-
+    
         dynamicGridContainer.Children.Add(resultGrid);
     }
-    
+
+    private static string TracePath(int [,] routeMatrix, int destinationIndex)
+    {
+        var path = new List<int>();
+        var at = 0;
+        for (; at != destinationIndex; at = routeMatrix[at, destinationIndex])
+        {
+            path.Add(at);
+        }
+        path.Add(at);
+
+        var pathStr = string.Join("->", path.Select(p => (char)('A' + p)));
+        
+        return pathStr;
+    }
+
     private static void CreateCell(Grid dynamicGrid, int x, int y, string text)
     {
         var textBox = new TextBlock
@@ -63,39 +76,12 @@ public class DijkstraTableBuilder
             Height = 30,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,
-            TextWrapping = TextWrapping.Wrap,
             TextAlignment = TextAlignment.Center,
             Margin = new Thickness(5)
         };
-
+    
         Grid.SetRow(textBox, x);
         Grid.SetColumn(textBox, y);
         dynamicGrid.Children.Add(textBox);
-    }
-
-    private static void TracePath(List<int> weightArray, List<int> tracebackArray, int destinationIndex,
-        out string path, out int length)
-    {
-        var traceList = new List<int>();
-        traceList.Add(destinationIndex);
-
-        length = weightArray[destinationIndex];
-        var traceIndex = destinationIndex;
-        do
-        {
-            traceIndex = tracebackArray[traceIndex];
-            if (traceIndex != -1)
-            {
-                traceList.Add(traceIndex);
-            }
-        } while (traceIndex != -1);
-        
-        traceList.Reverse();
-
-        path = "";
-        for (var i = 0; i < traceList.Count; ++i)
-        {
-            path += i != traceList.Count - 1 ? $"{(char)('A' + traceList[i])}->" : $"{(char)('A' + traceList[i])}";
-        }
     }
 }

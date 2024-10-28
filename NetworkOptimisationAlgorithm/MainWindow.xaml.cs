@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NetworkOptimisationAlgorithm.Dijkstra;
+using NetworkOptimisationAlgorithm.Floyd;
 
 namespace NetworkOptimisationAlgorithm;
 
@@ -33,7 +34,7 @@ public partial class MainWindow : Window
         
         InitializeComponent();
         GenerateTransportGrid();
-        PreDefine();
+        PreDefineGraph();
     }
     
     private void GenerateTransportGrid()
@@ -97,9 +98,9 @@ public partial class MainWindow : Window
         }
     }
     
-    private void PreDefine()
+    private void PreDefineGraph()
     {
-        int [,]weightMatrix = new [,]
+        int [,]weightMatrix =
         {
             {0, 7, 9, 4, -1, -1, -1, -1, -1},
             {7, 0, -1, 8, 1, -1, -1, 6, -1},
@@ -112,9 +113,22 @@ public partial class MainWindow : Window
             {-1, -1, -1, -1, -1, 3, 6, 8, 0},
         };
         
-        for (int i = 1; i <= NodeCount; i++)
+        // int [,]weightMatrix =
+        // {
+        //     {0, 5, -1, 25, -1, -1, -1, -1, -1},
+        //     {-1, 0, 1, -1, -1, -1, -1, -1, -1},
+        //     {-1, -1, 0, -1, -1, -1, -1, -1, 1},
+        //     {-1, 19, -1, 0, -1, -1, -1, -1, -1},
+        //     {-1, -1, 7, -1, 0, -1, 1, -1, -1},
+        //     {-1, -1, -1, -1, -1, 0, 3, -1, -1},
+        //     {-1, -1, 4, -1, -1, -1, 0, 2, -1},
+        //     {-1, -1, -1, 1, -1, -1, -1, 0, -1},
+        //     {-1, -1, -1, -1, 1, 8, -1, -1, 0},
+        // };
+        
+        for (var i = 1; i <= NodeCount; i++)
         {
-            for (int j = 1; j <= NodeCount; j++)
+            for (var j = 1; j <= NodeCount; j++)
             {
                 ((TextBox)GetGridElement(TransportGrid, i, j)).Text = weightMatrix[i - 1, j - 1].ToString();
             }
@@ -166,12 +180,16 @@ public partial class MainWindow : Window
             
             dijkstra.Solve();
             
-            DijkstraTableBuilder.OutFinalTable(dijkstra.WeightArray, dijkstra.TracebackArray, 
+            DijkstraTableBuilder.BuildFinalTable(dijkstra.WeightArray, dijkstra.TracebackArray, 
                 DynamicGridContainer);
         }
         else
         {
-            Console.WriteLine("Floyd");
+            var floyd = new FloydAlgorithm(weightMatrix);
+            
+            floyd.Solve();
+            
+            FloydTableBuilder.BuildFinalTable(floyd.ShortestPathMatrix, floyd.RouteMatrix, DynamicGridContainer);
         }
     }
 
