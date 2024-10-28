@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace NetworkOptimisationAlgorithm.Floyd;
 
-public class FloydTableBuilder
+public static class FloydTableBuilder
 {
     public static void BuildFinalTable(int [,] shortestPathMatrix, int [,] routeMatrix, StackPanel dynamicGridContainer)
     {
@@ -54,30 +54,16 @@ public class FloydTableBuilder
 
     private static string TracePath(int [,] routeMatrix, int destinationIndex)
     {
-        var reverseTracedRoute = new HashSet<int>();
-        reverseTracedRoute.Add(destinationIndex);   // Adding last node index
-        
-        var traceIndex = destinationIndex;
-        traceIndex = routeMatrix[0, traceIndex];
-        reverseTracedRoute.Add(traceIndex);     // It could be first index
-        
-        while (traceIndex != -1)
+        var path = new List<int>();
+        var at = 0;
+        for (; at != destinationIndex; at = routeMatrix[at, destinationIndex])
         {
-            traceIndex = routeMatrix[traceIndex, 0];
-            reverseTracedRoute.Add(traceIndex);
+            path.Add(at);
         }
+        path.Add(at);
 
-        reverseTracedRoute.RemoveWhere(x => x == -1);
-        var traceRoute = reverseTracedRoute.Reverse().GetEnumerator();
-
-        var pathStr = "";
-        while(traceRoute.MoveNext())
-        {
-            pathStr += traceRoute.Current != destinationIndex ? $"{(char)('A' + traceRoute.Current)}->" : $"{(char)('A' + traceRoute.Current)}";
-        }
+        var pathStr = string.Join("->", path.Select(p => (char)('A' + p)));
         
-        traceRoute.Dispose();
-
         return pathStr;
     }
 
@@ -86,7 +72,7 @@ public class FloydTableBuilder
         var textBox = new TextBlock
         {
             Text = text,
-            Width = 80,
+            Width = 150,
             Height = 30,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,

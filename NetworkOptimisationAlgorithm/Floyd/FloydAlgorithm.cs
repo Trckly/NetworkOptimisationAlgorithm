@@ -22,7 +22,8 @@ public class FloydAlgorithm
             for (var j = 0; j < nodesCount; j++)
             {
                 _shortestPathMatrix[i, j] = weightMatrix[i, j] < 0 ? int.MaxValue : weightMatrix[i, j];
-                _routeMatrix[i, j] = i != j ? j : -1;
+                if (_shortestPathMatrix[i, j] != int.MaxValue)
+                    _routeMatrix[i, j] = j;
             }
         }
     }
@@ -58,17 +59,11 @@ public class FloydAlgorithm
                 var nodeColumnValue = _shortestPathMatrix[nodeIndex, j];
                 if (nodeColumnValue == int.MaxValue) continue;
 
-                var minValue = Math.Min(_shortestPathMatrix[i, j], nodeRowValue + nodeColumnValue);
-
-                if (minValue != _shortestPathMatrix[i, j])
+                if (_shortestPathMatrix[i, nodeIndex] + _shortestPathMatrix[nodeIndex, j] < _shortestPathMatrix[i, j])
                 {
-                    if(_routeMatrix[i, nodeIndex] == nodeIndex)
-                        _routeMatrix[i, j] = nodeIndex;
-                    else
-                        _routeMatrix[i, j] = _routeMatrix[i, nodeIndex];
+                    _shortestPathMatrix[i, j] = _shortestPathMatrix[i, nodeIndex] + _shortestPathMatrix[nodeIndex, j];
+                    _routeMatrix[i, j] = _routeMatrix[i, nodeIndex];
                 }
-
-                _shortestPathMatrix[i, j] = minValue;
             }
         }
     }
