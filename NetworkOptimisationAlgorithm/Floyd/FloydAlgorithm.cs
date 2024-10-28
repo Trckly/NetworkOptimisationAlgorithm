@@ -34,6 +34,31 @@ public class FloydAlgorithm
 
     private void Floyd(int nodeIndex)
     {
-        
+        var nodesCount = _shortestPathMatrix.GetLength(0);
+
+        for (var i = 0; i < nodesCount; i++)
+        {
+            if(i == nodeIndex) continue;
+            
+            var nodeRowValue = _shortestPathMatrix[i,nodeIndex]
+            if(nodeRowValue == int.MaxValue) continue;
+
+            for (var j = 0; j < nodesCount; j++)
+            {
+                if (i == j) continue;
+
+                if (j == nodeIndex) continue;
+
+                var nodeColumnValue = _shortestPathMatrix[nodeIndex, j];
+                if (nodeColumnValue == int.MaxValue) continue;
+
+                var minValue = Math.Min(_shortestPathMatrix[i, j], nodeRowValue + nodeColumnValue);
+
+                if (minValue != _shortestPathMatrix[i, j])
+                    _routeMatrix[i, j] = nodeIndex;
+
+                _shortestPathMatrix[i, j] = minValue;
+            }
+        }
     }
 }
