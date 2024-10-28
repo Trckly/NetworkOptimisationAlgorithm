@@ -1,6 +1,6 @@
 ﻿namespace NetworkOptimisationAlgorithm.Dijkstra;
 
-public class DijkstraLogger
+public static class DijkstraLogger
 {
     public static void OutCalculationTable(List<int> weightArray, List<int> tracebackArray, Dictionary<int, bool> markedNodes)
     {
