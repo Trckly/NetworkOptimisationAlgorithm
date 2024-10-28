@@ -30,6 +30,12 @@ public class FloydAlgorithm
     public void Solve()
     {
         FloydLogger.OutFloydMatrices(_shortestPathMatrix, _routeMatrix, 0);
+
+        for (var i = 0; i < _shortestPathMatrix.GetLength(0); i++)
+        {
+            Floyd(i);
+            FloydLogger.OutFloydMatrices(_shortestPathMatrix, _routeMatrix, i);
+        }
     }
 
     private void Floyd(int nodeIndex)
@@ -39,8 +45,8 @@ public class FloydAlgorithm
         for (var i = 0; i < nodesCount; i++)
         {
             if(i == nodeIndex) continue;
-            
-            var nodeRowValue = _shortestPathMatrix[i,nodeIndex]
+
+            var nodeRowValue = _shortestPathMatrix[i, nodeIndex];
             if(nodeRowValue == int.MaxValue) continue;
 
             for (var j = 0; j < nodesCount; j++)
@@ -55,7 +61,12 @@ public class FloydAlgorithm
                 var minValue = Math.Min(_shortestPathMatrix[i, j], nodeRowValue + nodeColumnValue);
 
                 if (minValue != _shortestPathMatrix[i, j])
-                    _routeMatrix[i, j] = nodeIndex;
+                {
+                    if(_routeMatrix[i, nodeIndex] == nodeIndex)
+                        _routeMatrix[i, j] = nodeIndex;
+                    else
+                        _routeMatrix[i, j] = _routeMatrix[i, nodeIndex];
+                }
 
                 _shortestPathMatrix[i, j] = minValue;
             }

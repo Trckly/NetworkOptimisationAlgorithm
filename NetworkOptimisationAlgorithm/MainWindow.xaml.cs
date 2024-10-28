@@ -100,17 +100,30 @@ public partial class MainWindow : Window
     
     private void PreDefineGraph()
     {
+        // int [,]weightMatrix =
+        // {
+        //     {0, 7, 9, 4, -1, -1, -1, -1, -1},
+        //     {7, 0, -1, 8, 1, -1, -1, 6, -1},
+        //     {9, -1, 0, 5, -1, 8, 4, -1, -1},
+        //     {4, 8, 5, 0, -1, -1, 9, 5, -1},
+        //     {-1, 1, -1, -1, 0, -1, -1, 2, -1},
+        //     {-1, -1, 8, -1, -1, 0, -1, -1, 3},
+        //     {-1, -1, 4, 9, -1, -1, 0, 7, 6},
+        //     {-1, 6, -1, 5, 2, -1, 7, 0, 8},
+        //     {-1, -1, -1, -1, -1, 3, 6, 8, 0},
+        // };
+        
         int [,]weightMatrix =
         {
-            {0, 7, 9, 4, -1, -1, -1, -1, -1},
-            {7, 0, -1, 8, 1, -1, -1, 6, -1},
-            {9, -1, 0, 5, -1, 8, 4, -1, -1},
-            {4, 8, 5, 0, -1, -1, 9, 5, -1},
-            {-1, 1, -1, -1, 0, -1, -1, 2, -1},
-            {-1, -1, 8, -1, -1, 0, -1, -1, 3},
-            {-1, -1, 4, 9, -1, -1, 0, 7, 6},
-            {-1, 6, -1, 5, 2, -1, 7, 0, 8},
-            {-1, -1, -1, -1, -1, 3, 6, 8, 0},
+            {0, 5, -1, 25, -1, -1, -1, -1, -1},
+            {-1, 0, 1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, 0, -1, -1, -1, -1, -1, 1},
+            {-1, 19, -1, 0, -1, -1, -1, -1, -1},
+            {-1, -1, 7, -1, 0, -1, 1, -1, -1},
+            {-1, -1, -1, -1, -1, 0, 3, -1, -1},
+            {-1, -1, 4, -1, -1, -1, 0, 2, -1},
+            {-1, -1, -1, 1, -1, -1, -1, 0, -1},
+            {-1, -1, -1, -1, 1, 8, -1, -1, 0},
         };
         
         for (var i = 1; i <= NodeCount; i++)
@@ -167,7 +180,7 @@ public partial class MainWindow : Window
             
             dijkstra.Solve();
             
-            DijkstraTableBuilder.OutFinalTable(dijkstra.WeightArray, dijkstra.TracebackArray, 
+            DijkstraTableBuilder.BuildFinalTable(dijkstra.WeightArray, dijkstra.TracebackArray, 
                 DynamicGridContainer);
         }
         else
@@ -175,6 +188,8 @@ public partial class MainWindow : Window
             var floyd = new FloydAlgorithm(weightMatrix);
             
             floyd.Solve();
+            
+            FloydTableBuilder.BuildFinalTable(floyd.ShortestPathMatrix, floyd.RouteMatrix, DynamicGridContainer);
         }
     }
 
